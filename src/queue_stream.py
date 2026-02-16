@@ -11,14 +11,10 @@ class stream:
         self.stream.put(item)
 
     def run(self):
-        #prev = False
         while True:
             if not self.stream.empty():
                 time.sleep(1)
                 info = self.stream.get()
-                #while prev != False and info.text == prev.text and info.from_user.username == prev.from_user.username:
-                #    info = self.stream.get()
-                #prev = info
                 player = info.from_user.username
                 text = info.text
                 if '/start_game' in text:

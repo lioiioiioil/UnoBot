@@ -59,7 +59,6 @@ class game:
                 else:
                     s += p[j] + ' '
             s = s[:-1]
-            #print(*mas)
             self.cards.append(card(mas[0], mas[1], mas[2], mas[3], s, mas[5], int(mas[6])))
         file.close()
         self.index_in_cards = [i for i in range(len(self.cards))]
@@ -129,93 +128,93 @@ class game:
         self.current_position = 0
         self.step = 1
         self.top_of_deck = self.take_top_card()
+        try :
+            while self.isRunning:
+                markup = telebot.types.ReplyKeyboardRemove()
+                unoBot.safe_send_message(self.chatId, 'Верхняя карта: ', reply_markup=markup)
+                unoBot.safe_send_stiker(self.chatId, self.top_of_deck.stiker)
+                if (self.top_of_deck.number == 'universal'):
+                    if self.top_of_deck.color == 'green':
+                        unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟩')
+                    elif self.top_of_deck.color == 'yellow':
+                        unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟨')
+                    elif self.top_of_deck.color == 'blue':
+                        unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟦')
+                    elif self.top_of_deck.color == 'red':
+                        unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟥')
+                buttons = [types.KeyboardButton("Взять карту")]
+                keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4, selective=True)
+                for i in range(len(self.players[self.current_position].cards)):
+                    msg = self.players[self.current_position].cards[i].name
+                    buttons.append(types.KeyboardButton(msg))
+                keyboard.add(*buttons)
+                unoBot.safe_send_message(self.chatId, '@' + self.players[self.current_position].name +' выбери номер карты, которую кинешь или возьми из колоды', reply_markup=keyboard)
 
-        while self.isRunning:
-            markup = telebot.types.ReplyKeyboardRemove()
-            unoBot.safe_send_message(self.chatId, 'Верхняя карта: ', reply_markup=markup)
-            unoBot.safe_send_stiker(self.chatId, self.top_of_deck.stiker)
-            if (self.top_of_deck.number == 'universal'):
-                if self.top_of_deck.color == 'green':
-                    unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟩')
-                elif self.top_of_deck.color == 'yellow':
-                    unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟨')
-                elif self.top_of_deck.color == 'blue':
-                    unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟦')
-                elif self.top_of_deck.color == 'red':
-                    unoBot.safe_send_message(self.chatId, 'Цвет: ' + '🟥')
-            buttons = [types.KeyboardButton("Взять карту")]
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4, selective=True)
-            for i in range(len(self.players[self.current_position].cards)):
-                msg = self.players[self.current_position].cards[i].name
-                buttons.append(types.KeyboardButton(msg))
-            keyboard.add(*buttons)
-            #time.sleep(1)
-            unoBot.safe_send_message(self.chatId, '@' + self.players[self.current_position].name +' выбери номер карты, которую кинешь или возьми из колоды', reply_markup=keyboard)
-
-            card_was_taken = False
-            while True:
-                while self.isRunning and self.player_hasActed[self.players[self.current_position].name] is False:
-                    pass
-                self.player_hasActed[self.players[self.current_position].name] = False
-                if self.isRunning is False:
-                    break
-                num_in_players_cards = self.player_lastMove[self.players[self.current_position].name]
-                if num_in_players_cards == -1:
-                    if card_was_taken is False:
-                        card_was_taken = True
-                        self.players[self.current_position].cards.append(self.take_top_card())
-                        num_in_players_cards = len(self.players[self.current_position].cards) - 1
-                        if all( (not self.can_put_card(i)) for i in range(len(self.players[self.current_position].cards))):
-                            buttons = [unoBot.types.KeyboardButton("Пропуск хода")]
+                card_was_taken = False
+                while True:
+                    while self.isRunning and self.player_hasActed[self.players[self.current_position].name] is False:
+                        pass
+                    self.player_hasActed[self.players[self.current_position].name] = False
+                    if self.isRunning is False:
+                        break
+                    num_in_players_cards = self.player_lastMove[self.players[self.current_position].name]
+                    if num_in_players_cards == -1:
+                        if card_was_taken is False:
+                            card_was_taken = True
+                            self.players[self.current_position].cards.append(self.take_top_card())
+                            num_in_players_cards = len(self.players[self.current_position].cards) - 1
+                            if all( (not self.can_put_card(i)) for i in range(len(self.players[self.current_position].cards))):
+                                buttons = [unoBot.types.KeyboardButton("Пропуск хода")]
+                            else:
+                                buttons = []
+                            keyboard = unoBot.types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4,  selective=True)
+                            for i in range(len(self.players[self.current_position].cards)):
+                                msgg = self.players[self.current_position].cards[i].name
+                                buttons.append(unoBot.types.KeyboardButton(msgg))
+                            keyboard.add(*buttons)
+                            unoBot.safe_send_message(self.chatId,
+                                                    '@' + self.players[self.current_position].name +" карта добавлена",
+                                                    reply_markup=keyboard)
                         else:
-                            buttons = []
-                        keyboard = unoBot.types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4,  selective=True)
-                        for i in range(len(self.players[self.current_position].cards)):
-                            msgg = self.players[self.current_position].cards[i].name
-                            buttons.append(unoBot.types.KeyboardButton(msgg))
-                        keyboard.add(*buttons)
-                        unoBot.safe_send_message(self.chatId,
-                                                '@' + self.players[self.current_position].name +" карта добавлена",
-                                                reply_markup=keyboard)
+                            if all( (not self.can_put_card(i)) for i in range(len(self.players[self.current_position].cards))):
+                                unoBot.safe_send_message(self.chatId, 'Пропускаешь ход, уви')
+                                self.current_position = (len(self.players) + self.current_position + self.step) % len(self.players)
+                                break
+                            else:
+                                unoBot.safe_send_message(self.chatId, 'Хватит брать карты из колоды!!!')
                     else:
-                        if all( (not self.can_put_card(i)) for i in range(len(self.players[self.current_position].cards))):
-                            unoBot.safe_send_message(self.chatId, 'Пропускаешь ход, уви')
-                            self.current_position = (len(self.players) + self.current_position + self.step) % len(self.players)
+                        if self.can_put_card(num_in_players_cards):
+                            self.put_card(num_in_players_cards)
                             break
                         else:
-                            unoBot.safe_send_message(self.chatId, 'Хватит брать карты из колоды!!!')
-                else:
-                    if self.can_put_card(num_in_players_cards):
-                        self.put_card(num_in_players_cards)
-                        break
-                    else:
-                        unoBot.safe_send_message(self.chatId, 'Такой карты нет(')
+                            unoBot.safe_send_message(self.chatId, 'Такой карты нет(')
 
-            if any(len(self.players[i].cards) == 0 for i in range(len(self.players))):
-                pobed = 0
-                for i in range(len(self.players)):
-                    if len(self.players[i].cards) == 0:
-                        pobed = i
-                        unoBot.safe_send_message(self.chatId,f'ПОЗДРАВЛЯЕМ С ПОБЕДОЙ @{self.players[i].name}')
-                        break
-                strr = 'Остальные места по количеству штрафных баллов:\n'
-                arr = []
-                for i in range(len(self.players)):
-                    if i != pobed:
-                        sum = 0
-                        for j in self.players[i].cards:
-                           sum += j.points
-                        arr.append((sum, self.players[i].name))
-                arr.sort()
-                for i in range(len(arr)):
-                    summ, name = arr[i]
-                    strr += f'{i+2} место @{name}  - {summ}б.\n'
-                unoBot.safe_send_message(self.chatId, strr)
-                self.isRunning = False
-
+                if any(len(self.players[i].cards) == 0 for i in range(len(self.players))):
+                    pobed = 0
+                    for i in range(len(self.players)):
+                        if len(self.players[i].cards) == 0:
+                            pobed = i
+                            unoBot.safe_send_message(self.chatId,f'ПОЗДРАВЛЯЕМ С ПОБЕДОЙ @{self.players[i].name}')
+                            break
+                    strr = 'Остальные места по количеству штрафных баллов:\n'
+                    arr = []
+                    for i in range(len(self.players)):
+                        if i != pobed:
+                            sum = 0
+                            for j in self.players[i].cards:
+                               sum += j.points
+                            arr.append((sum, self.players[i].name))
+                    arr.sort()
+                    for i in range(len(arr)):
+                        summ, name = arr[i]
+                        strr += f'{i+2} место @{name}  - {summ}б.\n'
+                    unoBot.safe_send_message(self.chatId, strr)
+                    self.isRunning = False
+        except Exception as e:
+            self.isRunning = False
         markup = telebot.types.ReplyKeyboardRemove()
         unoBot.safe_send_message(self.chatId,
-                                'Игра закончилась ну блииииин(((09((09(((',
+                                'Игра закончилась(',
                                 reply_markup=markup)
         self.clear_fields()
 
