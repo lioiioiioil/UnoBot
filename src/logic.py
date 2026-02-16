@@ -45,7 +45,12 @@ class game:
         self.chatId = tgId
         self.cards = []
 
-        file = open("UNO cards.txt", 'r')
+        import os
+
+        # Определяем путь к файлу относительно текущего скрипта
+        base_dir = os.path.dirname(__file__)
+        file_path = os.path.join(base_dir, "cards.txt")
+        file = open(file_path, 'r')
         while True:
             mas = file.readline().strip()
             if not mas:
