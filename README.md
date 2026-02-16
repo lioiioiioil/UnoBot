@@ -13,7 +13,7 @@
 ## Установка
  Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/username/uno-telegram-bot.git
+   git clone https://github.com/lioiioiioil/UnoBot.git
    cd uno-telegram-bot
    ```
 
