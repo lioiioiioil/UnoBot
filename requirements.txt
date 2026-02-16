@@ -1,0 +1,3 @@
+pyTelegramBotApi
+numpy~=2.3.0
+thread6
