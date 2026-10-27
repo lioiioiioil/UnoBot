@@ -1,11 +1,22 @@
+import os
+
+# Validate configuration before imports that start the message worker.
+bot_token = os.environ.get('BOT_TOKEN', '').strip()
+if not bot_token:
+    raise RuntimeError('Set the BOT_TOKEN environment variable before starting the bot.')
+
 import telebot
+from telebot.util import validate_token
+
+validate_token(bot_token)
+
 import logic
 import sharedVars
 import time
 from telebot.apihelper import ApiTelegramException
 from telebot import types
 
-bot = telebot.TeleBot('Your-Tg-Bot-ID')
+bot = telebot.TeleBot(bot_token)
 
 def safe_send_message(chat_id, text, reply_markup=None, retries=3):
     for attempt in range(retries):
